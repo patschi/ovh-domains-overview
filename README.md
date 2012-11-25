@@ -14,5 +14,5 @@ Screenshot
 
 Credits
 =============
-Bootstrap by Twitter: <a href="http://twitter.github.com/bootstrap/" target="_blank">http://twitter.github.com/bootstrap/</a>
+Bootstrap by Twitter: <a href="http://twitter.github.com/bootstrap/" target="_blank">http://twitter.github.com/bootstrap/</a><br />
 SOAPI by OVH: <a href="http://www.ovh.com/soapi/en/" target="_blank">http://www.ovh.com/soapi/en/</a>
