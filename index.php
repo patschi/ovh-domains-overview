@@ -1,7 +1,30 @@
 <?php
+/*
 
+  @Name.....: ovh-domains-overview
+  @Author...: Patschi
+  @Homepage.: http://pkern.at
+  @Source...: https://github.com/patschi/ovh-domains-overview
+  @Date.....: 30.06.2013
+  @Version..: 1.1
+  @Changelog:
+     v1.0: Release.
+     v1.1: Added this informations on the top of index.php,
+           sorting domains after expiration date,
+           sorting domains with a click on domain, creation or expiration,
+           commented most code in some php files,
+           improved nameserver listening with implode(),
+           other small improvements.
+
+*/
+
+// Include required php files
 include("./inc/includes.php");
+
+// Check if cache needs an update
 run_cache();
+
+// Load domains from cache and put it in the array
 $result = load_domains();
 
 ?>
@@ -12,10 +35,10 @@ $result = load_domains();
     <meta http-equiv="content-style-type" content="text/css" />
     <meta http-equiv="content-language" content="de" />
     <meta http-equiv="imagetoolbar" content="no" />
-    <meta name="copyright" content="2012 pkern.at" />
+    <meta name="copyright" content="2013 pkern.at" />
     <meta name="keywords" content="" />
     <meta name="description" content="" />
-    <title>Domains</title>
+    <title>My Domains</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     <style type="text/css">
@@ -73,18 +96,23 @@ $result = load_domains();
 		   <th>DNS</th>
 		</tr><?php
 
-foreach($result as $dom)
+// sort domains
+switch($_GET["sort"]) {
+  case 'domain'    : usort($result, "compare_domain"); break;
+  case 'creation'  : usort($result, "compare_creation"); break;
+  case 'expiration': usort($result, "compare_expiration"); break;
+  case 'expirein'  : usort($result, "compare_expiration"); break;
+  default          : usort($result, "compare_expiration"); break;
+}
+
+// output domains
+foreach($result as $key => $dom)
 {
-	//print_r($dom);
-	$creation = strtotime($dom["creation"]);
+	//print_r($dom); // for debugging
+	$creation   = strtotime($dom["creation"]);
 	$expiration = strtotime($dom["expiration"]);
-	$expire_in = time2str($expiration - time());
-	$dns = "";
-	foreach($dom["dns"] as $ds)
-	{
-		$dns .= $ds.", "; 
-	}
-	$dns = substr($dns, 0, strlen($dns)-2);
+	$expire_in  = time2str($expiration - time()); // get expire in 1h 1m 1s format
+	$dom["dns"] = implode(", ", $dom["dns"]); // list domains with ","
 	echo '
 		<tr>
 		   <td>#'.$dom["id"].'</td>
@@ -92,7 +120,7 @@ foreach($result as $dom)
 		   <td>'.date("d.m.Y", $creation).'</td>
 		   <td>'.date("d.m.Y", $expiration).'</td>
 		   <td>'.$expire_in.'</td>
-		   <td>'.$dns.'</td>
+		   <td>'.$dom["dns"].'</td>
 		</tr>
 ';
 }

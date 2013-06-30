@@ -1,5 +1,25 @@
 <?php
 
+// sorting callback functions
+// sort by domain name
+function compare_domain($a, $b)
+{
+	return strnatcmp($a['domain'], $b['domain']);
+}
+
+// sort by expiration
+function compare_expiration($a, $b)
+{
+	return strnatcmp($a['expiration'], $b['expiration']);
+}
+
+// sort by creation
+function compare_creation($a, $b)
+{
+	return strnatcmp($a['creation'], $b['creation']);
+}
+
+// Check cache if it needs an update
 function run_cache()
 {
 	global $config;
@@ -8,6 +28,7 @@ function run_cache()
 	}
 }
 
+// Update cache and pull the domains from the API of OVH
 function refresh()
 {
 	global $config;
@@ -30,30 +51,32 @@ function refresh()
 	}
 }
 
+// Read cache and build an array for easier using in the index.php file
 function load_domains()
 {
 	$i = 0;
 	$result = null;
 	$cache = file_get_contents("./inc/cache.txt");
-	$cache = json_decode($cache);
-	$domains = $cache->domains;
+	$cache = json_decode($cache, true);
+	$domains = $cache["domains"];
 
 	foreach($domains as $domain) {
 		$i++;
 		$dns = array();
 		$dn = "dom_".$domain;
-		$info = $cache->$dn;
-		foreach($info->dns as $dnsname) {
-			$dns[] = $dnsname->name;
+		$info = $cache["$dn"];
+		foreach($info["dns"] as $dnsname) {
+			$dns[] = $dnsname["name"];
 		}
-		unset($info->dns);
-		$info->dns = $dns;
-		$info->id = $i;
-		$result[$domain] = (array)$info;
+		unset($info["dns"]);
+		$info["dns"] = $dns;
+		$info["id"] = $i;
+		$result[$domain] = $info;
 	}
 	return $result;
 }
 
+// Calculate the time two unix timestamps in readable 1y 1m 1h 1s format.
 function time2str($time, $anz=9) {
 	$str = "";
 	if($time > (60 * 60 * 24 * 30.5) && $anz > 0) {
