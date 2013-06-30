@@ -6,7 +6,7 @@
   @Homepage.: http://pkern.at
   @Source...: https://github.com/patschi/ovh-domains-overview
   @Date.....: 30.06.2013
-  @Version..: 1.1
+  @Version..: 1.2
   @Changelog:
      v1.0: Release.
      v1.1: Added this informations on the top of index.php,
@@ -15,6 +15,7 @@
            commented most code in some php files,
            improved nameserver listening with implode(),
            other small improvements.
+     v1.2: Added icon in navigation bar for github project page.
 
 */
 
@@ -70,6 +71,9 @@ $result = load_domains();
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="./">Home</a></li>
+            </ul>
+            <ul class="nav pull-right">
+              <li title="Source"><a href="https://github.com/patschi/ovh-domains-overview/" target="_blank"><i class="icon-share icon-white"></i></a></li>
             </ul>
           </div>
         </div>
